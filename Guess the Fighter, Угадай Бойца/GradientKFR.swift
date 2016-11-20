@@ -31,7 +31,7 @@ func gradientSetNewColors(gradient gradient: CAGradientLayer, newColors: [CGColo
 }
 
 
-func animateGradient(gradient gradient: CAGradientLayer, animKeyPath: String, from: AnyObject, to: AnyObject, duration: CFTimeInterval, repeatCount: Float, autoreverse: Bool, timingFunc: CAMediaTimingFunction) {
+func animateGradient(gradient gradient: CAGradientLayer, animKeyPath: String, from: AnyObject, to: AnyObject, duration: CFTimeInterval, repeatCount: Float, autoreverse: Bool, timingFunc: CAMediaTimingFunction, beginTime: CFTimeInterval = 0.0) {
     var animation: CABasicAnimation!
     switch (animKeyPath) {
     case "colors":
@@ -70,51 +70,9 @@ func animateGradient(gradient gradient: CAGradientLayer, animKeyPath: String, fr
     animation.repeatCount = repeatCount
     animation.autoreverses = autoreverse
     animation.timingFunction = timingFunc
+    animation.beginTime = beginTime
     gradient.addAnimation(animation, forKey: nil)
 }
-
-
-
-/*
-func animateGradientColors(gradient gradient: CAGradientLayer, fromClrs: [CGColor], toClrs: [CGColor], duration: CFTimeInterval, repeatCount: Float, autoreverse: Bool, timingFunc: CAMediaTimingFunction) {
-    let animateColors = CABasicAnimation(keyPath: "colors")
-    animateColors.fromValue = fromClrs
-    animateColors.toValue = toClrs
-    animateColors.duration = duration
-    animateColors.repeatCount = repeatCount
-    animateColors.autoreverses = autoreverse
-    animateColors.timingFunction = timingFunc
-    gradient.addAnimation(animateColors, forKey: nil)
-}
-
-func animateGradientLocations(gradient gradient: CAGradientLayer, fromLoc: [NSNumber], toLoc: [NSNumber], duration: CFTimeInterval, repeatCount: Float, autoreverse: Bool, timingFunc: CAMediaTimingFunction) {
-    let animateLocations = CABasicAnimation(keyPath: "locations")
-    animateLocations.fromValue = fromLoc
-    animateLocations.toValue = toLoc
-    animateLocations.duration = duration
-    animateLocations.repeatCount = repeatCount
-    animateLocations.autoreverses = autoreverse
-    animateLocations.timingFunction = timingFunc
-    gradient.addAnimation(animateLocations, forKey: nil)
-}
-
-func animateGradientStartPointX(gradient gradient: CAGradientLayer, fromVal: Float, toVal: Float, duration: CFTimeInterval, repeatCount: Float, autoreverse: Bool, timingFunc: CAMediaTimingFunction) {
-    let animateStartPointX = CABasicAnimation(keyPath: "startPoint.x")
-    animateStartPointX.fromValue = fromVal
-    animateStartPointX.toValue = toVal
-    animateStartPointX.duration = duration
-    animateStartPointX.repeatCount = repeatCount
-    animateStartPointX.autoreverses = autoreverse
-    animateStartPointX.timingFunction = timingFunc
-    gradient.addAnimation(animateStartPointX, forKey: nil)
-}
-
-*/
-
-//////////////////////////////////////////////////
-
-
-
 
 
 

@@ -15,7 +15,6 @@
 		AC9911801DD9D48000D8C934 /* Fighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC99117F1DD9D48000D8C934 /* Fighter.swift */; };
 		AC9911821DD9D9FD00D8C934 /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9911811DD9D9FD00D8C934 /* GameController.swift */; };
 		ACADF9B51DDDCD59009CC0AC /* MainScreenTVController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACADF9B41DDDCD59009CC0AC /* MainScreenTVController.swift */; };
-		ACADF9B71DDE072C009CC0AC /* GradientKFR.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACADF9B61DDE072C009CC0AC /* GradientKFR.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +28,6 @@
 		AC99117F1DD9D48000D8C934 /* Fighter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fighter.swift; sourceTree = "<group>"; };
 		AC9911811DD9D9FD00D8C934 /* GameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
 		ACADF9B41DDDCD59009CC0AC /* MainScreenTVController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainScreenTVController.swift; sourceTree = "<group>"; };
-		ACADF9B61DDE072C009CC0AC /* GradientKFR.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientKFR.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,7 +65,6 @@
 				AC99117D1DD9D32300D8C934 /* QuestionViewController.swift */,
 				AC99117F1DD9D48000D8C934 /* Fighter.swift */,
 				ACADF9B41DDDCD59009CC0AC /* MainScreenTVController.swift */,
-				ACADF9B61DDE072C009CC0AC /* GradientKFR.swift */,
 				AC9911811DD9D9FD00D8C934 /* GameController.swift */,
 			);
 			path = "Guess the Fighter, Угадай Бойца";
@@ -162,7 +159,6 @@
 				AC9911801DD9D48000D8C934 /* Fighter.swift in Sources */,
 				AC6F20501DD1D4F3009C46B7 /* AppDelegate.swift in Sources */,
 				AC99117E1DD9D32300D8C934 /* QuestionViewController.swift in Sources */,
-				ACADF9B71DDE072C009CC0AC /* GradientKFR.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

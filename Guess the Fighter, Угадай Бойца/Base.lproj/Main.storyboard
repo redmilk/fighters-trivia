@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="zOo-gS-fHc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="A10-Iv-XUe">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -45,9 +45,6 @@
                                                         <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                         <color key="titleShadowColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                     </state>
-                                                    <connections>
-                                                        <segue destination="TUh-bb-cAe" kind="show" animates="NO" id="WPt-bg-wXf"/>
-                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -288,6 +285,17 @@
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         </textAttributes>
                                     </navigationBar>
+                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.55000000000000004" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DEBUG" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gjt-5c-deM">
+                                        <rect key="frame" x="22" y="291" width="339" height="85"/>
+                                        <color key="backgroundColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="85" id="Imt-6j-TI0"/>
+                                            <constraint firstAttribute="width" constant="339" id="f6j-Aa-sRn"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -303,6 +311,8 @@
                                     <constraint firstItem="txf-Iz-f8x" firstAttribute="top" secondItem="dcn-RV-2Xm" secondAttribute="top" constant="66" id="Syx-yU-AtA"/>
                                     <constraint firstItem="rac-lI-Mob" firstAttribute="top" secondItem="aTc-Mz-t2B" secondAttribute="bottom" constant="11" id="brO-6h-XMq"/>
                                     <constraint firstItem="lH2-IJ-CsV" firstAttribute="centerX" secondItem="dcn-RV-2Xm" secondAttribute="centerX" constant="1" id="cql-Y8-7ex"/>
+                                    <constraint firstItem="gjt-5c-deM" firstAttribute="centerY" secondItem="dcn-RV-2Xm" secondAttribute="centerY" id="fD9-qU-ivV"/>
+                                    <constraint firstItem="gjt-5c-deM" firstAttribute="centerX" secondItem="dcn-RV-2Xm" secondAttribute="centerX" id="iVd-Bi-FuB"/>
                                     <constraint firstItem="txf-Iz-f8x" firstAttribute="centerX" secondItem="dcn-RV-2Xm" secondAttribute="centerX" id="u7r-vR-V6H"/>
                                 </constraints>
                             </view>
@@ -324,6 +334,10 @@
                         <outlet property="imageView" destination="aTc-Mz-t2B" id="bbh-hc-AJI"/>
                         <outlet property="mainView" destination="QXV-ft-zv9" id="qtV-Xl-ieD"/>
                         <outlet property="picker" destination="4mp-92-xpJ" id="FMJ-AH-PEE"/>
+                        <outlet property="testLabel" destination="gjt-5c-deM" id="CMw-9u-J85"/>
+                        <outletCollection property="signX" destination="xnC-J0-R5f" collectionClass="NSMutableArray" id="9oj-s0-ajA"/>
+                        <outletCollection property="signX" destination="b7E-FZ-eiM" collectionClass="NSMutableArray" id="6Q1-nM-nSJ"/>
+                        <outletCollection property="signX" destination="OcQ-vG-UaQ" collectionClass="NSMutableArray" id="VJe-Mr-vgs"/>
                         <segue destination="7hQ-HU-Xam" kind="presentation" id="cYg-h3-Ugh"/>
                     </connections>
                 </viewController>
@@ -416,7 +430,4 @@
         <image name="pac1" width="1280" height="720"/>
         <image name="pac2" width="800" height="600"/>
     </resources>
-    <inferredMetricsTieBreakers>
-        <segue reference="WPt-bg-wXf"/>
-    </inferredMetricsTieBreakers>
 </document>
