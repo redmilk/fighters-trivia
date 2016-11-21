@@ -17,7 +17,7 @@ class GameController {
     var currentFighter: Fighter!
     private var currentQuestionIndex: Int!
     
-    var triesLeft: Int!
+    var triesLeft: Int = 3
     var answerListCount: Int!
     var currentAnswerListData: [String]!
     var CurrentRightAnswerIndex: Int!
@@ -29,7 +29,7 @@ class GameController {
         self.testLabel = debugLabel
         
         self.currentQuestionIndex = 0
-        self.triesLeft = 3
+        //self.triesLeft = 3
         
         self.fighters = [Fighter(name: "Manny Paquiao", image: "pacman1"),
                          Fighter(name: "Mike Tyson", image: "tyson1"),
@@ -39,8 +39,7 @@ class GameController {
                          Fighter(name: "Buakaw Banchamek", image: "khabib1"),
                          Fighter(name: "Dzhabar Askerov", image: "khabib1"),
                          Fighter(name: "Roy Jones Jr", image: "khabib1"),
-                         Fighter(name: "Vasiliy Lomachenko", image: "khabib1")
-        ]
+                         Fighter(name: "Vasiliy Lomachenko", image: "khabib1")]
         
         self.currentFighter = self.fighters[0]
         self.answerListCount = 8
@@ -82,21 +81,25 @@ class GameController {
     }
     
     
-    ///dopustil oshibku
-    func oneTryLost(gameOverFunc: ()) {
-        if self.triesLeft - 1 > 0 {
-            self.triesLeft! -= 1
-            /// dobavit krestit vmesto tochki
-        } else {
-            gameOverFunc
-                ///GAME OVER, player is out of tries
-        }
-    }
-    
     ///proverit verno ili net
-    func checkRightOrWrong(answer answer: String) -> Bool {
+    func checkRightOrWrong(answer answer: String, hideXfunc: ( ) -> (Void), gameOverFunc: ( ) -> (Void) ) -> Bool {
         let result = currentFighter.name == answer
-        self.testLabel.text = result.description
+        self.testLabel.text = self.triesLeft.description
+        //self.testLabel.text = result.description
+        if result == false {  //esli dopustil oshibku
+            if self.triesLeft - 1 >= 0 {
+                self.triesLeft -= 1
+                hideXfunc()
+                // dobavit krestik vmesto tochki
+            }
+            if self.triesLeft <= 0 {
+                gameOverFunc()
+                //GAME OVER, player is out of tries
+                
+            }
+        } else {  //esli otvetil verno
+            
+        }
         return result
     }
     
