@@ -54,21 +54,23 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         qVController = self
         
         gradient = CAGradientLayer()
+     
         theGameController = GameController(debugLabel: testLabel)
         
-        let gradientColors = [UIColor.magentaColor().CGColor, UIColor.blueColor().CGColor, UIColor.whiteColor().CGColor]
+        let gradientColors = [UIColor.blueColor().CGColor, UIColor.blackColor().CGColor, UIColor.whiteColor().CGColor]
         let startPoint = CGPoint(x: 0.95, y: 0.95)
         let endPoint = CGPoint(x: 1.0, y: 0.0)
         let locations = [NSNumber(double: 0.0), NSNumber(double: 0.2), NSNumber(double: 0.4)]
         
-        setupGradient(gradientView.layer, frame: mainView.bounds, gradient: gradient, colors: gradientColors, locations: locations, startPoint: startPoint, endPoint: endPoint, zPosition: -100)
+        let gradientInitialFrame = CGRect(x: 0.0, y: 0.0, width: mainView.bounds.width+5.0, height: mainView.bounds.height) //kostilik
+        setupGradient(gradientView.layer, frame: gradientInitialFrame, gradient: gradient, colors: gradientColors, locations: locations, startPoint: startPoint, endPoint: endPoint, zPosition: -100)
         
-        gradientDefaultAnimationSetup(self)
+        //gradientDefaultAnimationSetup(self)
         
     }
     
     override func viewDidAppear(animated: Bool) {
-        //animateGradientPredefined(gradient)
+         //animateGradientPredefined(gradient)
         //myGradientAnimation()
     }
     override func viewWillAppear(animated: Bool) { //viberaem centralniy element po umolchaniyu
@@ -104,25 +106,21 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
     
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        //let label = pickerView.viewForRow(row, forComponent: component) as! UILabel
-        //label.text = "???????"
         self.currentSelectedAnswer = self.theGameController.currentAnswerListData[row]
         self.testLabel.text = self.theGameController.currentAnswerListData[row]
     }
     
+    /////////////// ANIMATION DELEGATE ///////////////////////////////////////////////////////////
     override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
         if let name = anim.valueForKey("name") as? String {
             if name == "anim" {
-                print("dsfsdfsdfsdf")
                 
-                //self.gradient.colors = [UIColor.blueColor().CGColor, UIColor.blackColor().CGColor, UIColor.whiteColor().CGColor]
-                //self.gradient.startPoint = CGPoint(x: 0.99, y: 0.99)
-                
-                let notifController = UIAlertController(title: "GAME OVER", message: "Good luck. Try again!", preferredStyle: .Alert)
+                /*let notifController = UIAlertController(title: "GAME OVER", message: "Good luck. Try again!", preferredStyle: .Alert)
                 let buttonOk = UIAlertAction(title: "OK", style: .Default, handler: nil)
-                notifController.addAction(buttonOk)
-                
+                notifController.addAction(buttonOk)           
                 presentViewController(notifController, animated: true, completion: nil)
+                 */ //GAME OVER ALERT
+                
                 
             }
         }
@@ -130,7 +128,6 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     
     func gameOverFunc() {
         myGradientAnimation(self)
-        
         
     }
     
@@ -152,14 +149,13 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     
     func answerButtonAnimationOnPress() {
         let anim = CASpringAnimation(keyPath: "transform.scale")
-        anim.damping = 7.5
-        anim.initialVelocity = 100.0
-        anim.stiffness = 140.0
-        anim.mass = 10.0
+        anim.damping = 9.5
+        anim.initialVelocity = 10.0
+        //anim.stiffness = 100.0
+        anim.mass = 1.0
         anim.duration = anim.settlingDuration
-        anim.fromValue = 1.25
+        anim.fromValue = 1.2
         anim.toValue = 1.0
-        anim.duration = 0.25
         self.answerButton.layer.addAnimation(anim, forKey: nil)
     }
     
@@ -275,7 +271,7 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     
     func myGradientAnimation(delegate: UIViewController?) {
         let duration = 4.0
-        animateGradient(gradient: gradient, animKeyPath: "colors", from: [UIColor.blackColor().CGColor, UIColor.blueColor().CGColor, UIColor.whiteColor().CGColor], to: [UIColor.blueColor().CGColor, UIColor.blackColor().CGColor, UIColor.whiteColor().CGColor], duration: duration, repeatCount: Float.infinity, autoreverse: true, timingFunc: CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear), deleg: delegate!, animName: "anim2")
+        animateGradient(gradient: gradient, animKeyPath: "colors", from: [UIColor.blackColor().CGColor, UIColor.blueColor().CGColor, UIColor.whiteColor().CGColor], to: [UIColor.blueColor().CGColor, UIColor.blackColor().CGColor, UIColor.whiteColor().CGColor], duration: duration, repeatCount: Float.infinity, autoreverse: true, timingFunc: CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut), deleg: delegate!, animName: "anim2")
         
         animateGradient(gradient: gradient, animKeyPath: "startPoint.x", from: gradient.startPoint.x, to: 0.95, duration: duration, repeatCount: 1, autoreverse: false, timingFunc: CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut), deleg: delegate!, animName: "anim1")
         
@@ -283,11 +279,14 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         
     }
     
+    //    [self.view.layer insertSublayer:gradient atIndex:0];
+
+    
+    
+    //UIColor.init(colorLiteralRed: 0.0, green: 0.0, blue: 0.25*Float(arc4random())/Float(UINT32_MAX), alpha: 1.0).CGColor   -   random color
+    
     func gradientDefaultAnimationSetup(delegate: UIViewController?) {
-        
-        
-        
-         animateGradient(gradient: gradient, animKeyPath: "colors", from: [UIColor.blackColor().CGColor, UIColor.blueColor().CGColor, UIColor.whiteColor().CGColor], to: [UIColor.blueColor().CGColor, UIColor.blackColor().CGColor, UIColor.whiteColor().CGColor], duration: 4, repeatCount: Float.infinity, autoreverse: true, timingFunc: CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear), deleg: delegate!, animName: "anim2")
+         animateGradient(gradient: gradient, animKeyPath: "colors", from: [UIColor.blackColor().CGColor, UIColor.blueColor().CGColor, UIColor.whiteColor().CGColor], to: [UIColor.blueColor().CGColor, UIColor.blackColor().CGColor, UIColor.whiteColor().CGColor], duration: 10, repeatCount: Float.infinity, autoreverse: true, timingFunc: CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear), deleg: delegate!, animName: "anim2")
         
         
     }

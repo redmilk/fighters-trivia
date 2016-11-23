@@ -134,7 +134,7 @@ class GameController {
         return result
     }
     
-    ///
+    ///generirovat indeks pravilnogo otveta
     func generateRightAnswer() -> Int {
         let rand = Int(arc4random_uniform(UInt32(self.answerListCount)))
         self.currentAnswerListData[rand] = self.currentFighter.name
