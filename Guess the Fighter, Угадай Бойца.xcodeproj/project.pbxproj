@@ -64,8 +64,6 @@
 			isa = PBXGroup;
 			children = (
 				AC99117D1DD9D32300D8C934 /* QuestionViewController.swift */,
-				AC99117F1DD9D48000D8C934 /* Fighter.swift */,
-				ACADF9B41DDDCD59009CC0AC /* MainScreenTVController.swift */,
 				AC9911811DD9D9FD00D8C934 /* GameController.swift */,
 			);
 			path = "Guess the Fighter, Угадай Бойца";
@@ -74,6 +72,8 @@
 		AC731C0D1DD778B200B45B8C /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				AC99117F1DD9D48000D8C934 /* Fighter.swift */,
+				ACADF9B41DDDCD59009CC0AC /* MainScreenTVController.swift */,
 				AC6F204F1DD1D4F3009C46B7 /* AppDelegate.swift */,
 				AC6F20581DD1D4F3009C46B7 /* LaunchScreen.storyboard */,
 				AC6F205B1DD1D4F3009C46B7 /* Info.plist */,

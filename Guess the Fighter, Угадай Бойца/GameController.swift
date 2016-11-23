@@ -11,6 +11,7 @@ import Foundation
 //for debug window
 import UIKit
 
+var highScore: Int!
 
 class GameController {
     private var fighters: [Fighter] = [Fighter]()
@@ -21,6 +22,7 @@ class GameController {
     var answerListCount: Int!
     var currentAnswerListData: [String]!
     var CurrentRightAnswerIndex: Int!
+    var score: Int = 0
     
     var testLabel: UILabel!
     
@@ -29,48 +31,38 @@ class GameController {
         self.testLabel = debugLabel
         
         self.currentQuestionIndex = 0
-        //self.triesLeft = 3
         
-        self.fighters = [Fighter(name: "Manny Paquiao", image: "pacman1"),
+        self.fighters = [Fighter(name: "Manny Paquiao", image: "pac1"),
                          Fighter(name: "Mike Tyson", image: "tyson1"),
                          Fighter(name: "Jon Jones", image: "jones1"),
                          Fighter(name: "Conor McGregor", image: "conor1"),
-                         Fighter(name: "Habib Nurmagamedov", image: "khabib1"),
-                         Fighter(name: "Buakaw Banchamek", image: "khabib1"),
-                         Fighter(name: "Dzhabar Askerov", image: "khabib1"),
-                         Fighter(name: "Roy Jones Jr", image: "khabib1"),
-                         Fighter(name: "Vasiliy Lomachenko", image: "khabib1")]
-        
+                         Fighter(name: "Lennox Lewis", image: "lewis1"),
+                         Fighter(name: "Mike Tyson", image: "tyson1"),
+                         Fighter(name: "Jon Jones", image: "jones1"),
+                         Fighter(name: "Conor McGregor", image: "conor1"),
+                         Fighter(name: "Lennox Lewis", image: "lewis1"),
+                        ]
         self.currentFighter = self.fighters[0]
-        self.answerListCount = 8
-        
-        var result = [String]()
-        var randomFighterForAnswersList: Fighter!
-        
-        for _ in 1...answerListCount {
-            let rand = arc4random_uniform(UInt32(fighters.count))
-            randomFighterForAnswersList = self.fighters[Int(rand)]
-            
-            ///esli imya sluchainogo sovpadaet s nashim tekushim v igre ili takoi uzhe dobavlen v spisok otvetov
-            while randomFighterForAnswersList.name == currentFighter.name || result.contains({ $0 == randomFighterForAnswersList.name }) {
-                let rand = arc4random_uniform(UInt32(fighters.count))
-                randomFighterForAnswersList = self.fighters[Int(rand)]
-            }
-            result.append(randomFighterForAnswersList.name)
-            
-        }
-        currentAnswerListData = result
-        
+        //self.testLabel.text = score.description
+        self.answerListCount = 4
+        self.currentAnswerListData = self.getRandomAnswers(howmany: answerListCount)
         self.CurrentRightAnswerIndex = generateRightAnswer()
-
     }
     
-    
-    
-    
+    ///VSE ZAVYAZANO NA INDEKSE, KOGDA EGO MENYAEM ON UPRAVLYAET IZMENENIEM OSTALNOGO
+    ///kogda menyaem indeks tekushego voprosa, menyaetsya currentFighter na sootv.
     var CurrentQuestionIndex: Int = 0 {
         didSet {
+            
+            if CurrentQuestionIndex >= self.fighters.count {
+                return
+            }
+            
             self.currentFighter = self.fighters[CurrentQuestionIndex]
+            
+            qVController.setNewImage(self.fighters[CurrentQuestionIndex].image)
+            self.score += 1
+            //self.testLabel.text = self.score.description
         }
     }
     
@@ -80,38 +72,40 @@ class GameController {
         }
     }
     
+//////////////////////////////// RIGHT OR WRONG /////////////////////////////////
     
-    ///proverit verno ili net
-    func checkRightOrWrong(answer answer: String, hideXfunc: ( ) -> (Void), gameOverFunc: ( ) -> (Void) ) -> Bool {
+    func checkRightOrWrong(answer answer: String, changeXToDotFunc: ( ) -> (Void), gameOverFunc: ( ) -> (Void)) {
         let result = currentFighter.name == answer
-        self.testLabel.text = self.triesLeft.description
-        //self.testLabel.text = result.description
         if result == false {  //esli dopustil oshibku
             if self.triesLeft - 1 >= 0 {
                 self.triesLeft -= 1
-                hideXfunc()
-                // dobavit krestik vmesto tochki
+                changeXToDotFunc()
             }
             if self.triesLeft <= 0 {
                 gameOverFunc()
                 //GAME OVER, player is out of tries
                 
             }
-        } else {  //esli otvetil verno
-            
+        } else {  //esli otvetil verno ///OTVETIL PRAVILNO
+            ///DOBAVIT OCHKI vnutri
+            goToTheNextQuestion()
         }
-        return result
     }
     
-    ///pereiti k sleduyushemu voprosu
+    ///////////////// NEXT QUESTION //////////////// NEXT QUESTION//////////////
     func goToTheNextQuestion() {
         let ifWeCanGoToTheNextQuestion = currentQuestionIndex + 1
         if ifWeCanGoToTheNextQuestion > fighters.count-1 {
-            ///PLAYER PATHED WHOLE GAME
+            wholeGameIsPathedBy()
             print("That was the final question")
-        } else {
-            self.currentQuestionIndex! += 1
+        } else { //continue playing
+            
+            
+            CurrentQuestionIndex += 1
             self.currentAnswerListData = getRandomAnswers(howmany: self.answerListCount)
+            self.CurrentRightAnswerIndex = generateRightAnswer()
+            qVController.reloadPickerView()
+
         }
     }
     
@@ -140,6 +134,14 @@ class GameController {
         self.currentAnswerListData[rand] = self.currentFighter.name
         self.CurrentRightAnswerIndex = rand
         return rand
+    }
+    
+    func wholeGameIsPathedBy() {
+        let notifController = UIAlertController(title: "Congratulations!", message: "All game done...", preferredStyle: .Alert)
+         let buttonOk = UIAlertAction(title: "OK", style: .Default, handler: nil)
+         notifController.addAction(buttonOk)
+        qVController.presentViewController(notifController, animated: true, completion: nil)
+          //GAME OVER ALERT
     }
     
 }
