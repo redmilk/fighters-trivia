@@ -50,9 +50,10 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        qVController = self
         theGameController = GameController(debugLabel: self.testLabel)
         initGradient()
+        qVController = self
+
     }
     override func viewDidAppear(animated: Bool) {
     }
@@ -72,6 +73,9 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
         return 1
     }
+    
+    
+    
     func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return self.theGameController.answerListCount
     }
@@ -120,7 +124,7 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         let index: Int = Int(self.theGameController.answerListCount/2)
         picker.selectRow(index, inComponent: 0, animated: true)
         self.currentSelectedAnswer = self.theGameController.currentAnswerListData[picker.selectedRowInComponent(0)]
-        self.testLabel.text = currentSelectedAnswer
+        ///testLabel.text = currentSelectedAnswer
     }
     
     func reloadPickerView() {

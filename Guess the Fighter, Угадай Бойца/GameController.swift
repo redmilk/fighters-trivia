@@ -6,13 +6,7 @@
 //  Copyright © 2016 piqapp. All rights reserved.
 //
 
-
-
-
-
 import Foundation
-
-//for debug window
 import UIKit
 import AVFoundation
 import AudioToolbox
@@ -22,12 +16,11 @@ var highScore: Int!
 class GameController {
     private var fighters: [Fighter] = [Fighter]()
     var currentFighter: Fighter!
-    private var currentQuestionIndex: Int!
     
     var triesLeft: Int = 3
     var answerListCount: Int!
     var currentAnswerListData: [String]!
-    var CurrentRightAnswerIndex: Int!
+    var currentRightAnswerIndex: Int!
     var score: Int = 0
     
     var testLabel: UILabel!
@@ -36,47 +29,60 @@ class GameController {
         
         self.testLabel = debugLabel
         
-        self.currentQuestionIndex = 0
+        CURRENTQUESTIONINDEX = 0
         
         self.fighters = [Fighter(name: "Manny Paquiao", image: "pac1"),
                          Fighter(name: "Mike Tyson", image: "tyson1"),
                          Fighter(name: "Jon Jones", image: "jones1"),
                          Fighter(name: "Conor McGregor", image: "conor1"),
                          Fighter(name: "Lennox Lewis", image: "lewis1"),
-                         Fighter(name: "Mike Tyson", image: "tyson1"),
-                         Fighter(name: "Jon Jones", image: "jones1"),
-                         Fighter(name: "Conor McGregor", image: "conor1"),
-                         Fighter(name: "Lennox Lewis", image: "lewis1"),
+                         Fighter(name: "Aleksandr Emelianenko", image: "aemelianenko1"),
+                         Fighter(name: "Buakaw Banchamek", image: "buakaw1"),
+                         Fighter(name: "Fedor Emelianenko", image: "fedor1"),
+                         Fighter(name: "Batu Hasikov", image: "hasikov1"),
+                         Fighter(name: "Evander Hollyfield", image: "hollyfield1"),
+                         Fighter(name: "Artur Kyshenko", image: "kyshenko1"),
+                         Fighter(name: "Denis Lebedev", image: "lebedev1"),
+                         Fighter(name: "Vasiliy Lomachenko", image: "lomachenko1"),
+                         Fighter(name: "Floyd Mayweather", image: "mayweather1"),
+                         Fighter(name: "Aleksandr Povetkin", image: "povetkin1"),
+                         Fighter(name: "Andy Souwer", image: "souwer1"),
+                         Fighter(name: "Vladimir Klichko", image: "vklichko1"),
+                         Fighter(name: "Mike Zambidis", image: "zambidis1"),
+                         
         ]
+        
         self.currentFighter = self.fighters[0]
         //self.testLabel.text = score.description
-        self.answerListCount = 4
+        self.answerListCount = 8
         self.currentAnswerListData = self.getRandomAnswers(howmany: answerListCount)
-        self.CurrentRightAnswerIndex = generateRightAnswer()
+        self.currentRightAnswerIndex = generateRightAnswer()
+        //qVController.pickerSelectMiddleOption()
     }
     
     ///VSE ZAVYAZANO NA INDEKSE, KOGDA EGO MENYAEM ON UPRAVLYAET IZMENENIEM OSTALNOGO
     ///kogda menyaem indeks tekushego voprosa, menyaetsya currentFighter na sootv.
-    var CurrentQuestionIndex: Int = 0 {
+    var CURRENTQUESTIONINDEX: Int {
         didSet {
             
-            if CurrentQuestionIndex >= self.fighters.count {
+            if CURRENTQUESTIONINDEX >= self.fighters.count {
                 return
             }
             
-            self.currentFighter = self.fighters[CurrentQuestionIndex]
+            self.currentFighter = self.fighters[CURRENTQUESTIONINDEX]
             
-            qVController.setNewImage(self.fighters[CurrentQuestionIndex].image)
+            qVController.setNewImage(self.fighters[CURRENTQUESTIONINDEX].image)
             self.score += 1
+            qVController.pickerSelectMiddleOption()
+            //SHOW SCORE FUNC -->
             //self.testLabel.text = self.score.description
-        }
+            self.currentAnswerListData = getRandomAnswers(howmany: self.answerListCount)
+            self.currentRightAnswerIndex = generateRightAnswer()
+            qVController.reloadPickerView()
+            qVController.pickerSelectMiddleOption()
+            self.testLabel.text = self.currentAnswerListData[self.answerListCount/2] }
     }
     
-    var FightersCount: Int {
-        get {
-            return fighters.count
-        }
-    }
     
     //////////////////////////////// RIGHT OR WRONG /////////////////////////////////
     
@@ -103,17 +109,14 @@ class GameController {
     
     ///////////////// NEXT QUESTION //////////////// NEXT QUESTION//////////////
     func goToTheNextQuestion() {
-        let ifWeCanGoToTheNextQuestion = currentQuestionIndex + 1
+        let ifWeCanGoToTheNextQuestion = CURRENTQUESTIONINDEX + 1
         if ifWeCanGoToTheNextQuestion > fighters.count-1 {
+            ///FIX
             wholeGameIsPathedBy()
-            print("That was the final question")
         } else { //continue playing
             
+            CURRENTQUESTIONINDEX += 1
             
-            CurrentQuestionIndex += 1
-            self.currentAnswerListData = getRandomAnswers(howmany: self.answerListCount)
-            self.CurrentRightAnswerIndex = generateRightAnswer()
-            qVController.reloadPickerView()
             
         }
     }
@@ -142,7 +145,7 @@ class GameController {
     func generateRightAnswer() -> Int {
         let rand = Int(arc4random_uniform(UInt32(self.answerListCount)))
         self.currentAnswerListData[rand] = self.currentFighter.name
-        self.CurrentRightAnswerIndex = rand
+        self.currentRightAnswerIndex = rand
         return rand
     }
     
@@ -161,6 +164,7 @@ class GameController {
     }
     
     func wholeGameIsPathedBy() {
+        playSound("ACHIEVMENT")
         let notifController = UIAlertController(title: "Congratulations!", message: "All game done...", preferredStyle: .Alert)
         let buttonOk = UIAlertAction(title: "OK", style: .Default, handler: nil)
         notifController.addAction(buttonOk)
@@ -181,10 +185,10 @@ class GameController {
             AudioServicesPlaySystemSound(1006)
             break
         case "ACHIEVMENT":
-            AudioServicesPlaySystemSound(1368)
+            AudioServicesPlaySystemSound(1383)
             break
-        case "SCROLLING":
-            AudioServicesPlaySystemSound(1429)
+        case "SCROLLING": ///unused
+            AudioServicesPlaySystemSound(1419)
             break
         default:
             break
@@ -196,16 +200,16 @@ class GameController {
     
     func restartGame() {
         
-        print("restart game")
-        CurrentQuestionIndex = 0
+        CURRENTQUESTIONINDEX = 0
         self.currentFighter = self.fighters[0]
         //self.testLabel.text = score.description
         self.currentAnswerListData = self.getRandomAnswers(howmany: answerListCount)
-        self.CurrentRightAnswerIndex = generateRightAnswer()
+        self.currentRightAnswerIndex = generateRightAnswer()
         self.testLabel.text = currentFighter.image
         self.triesLeft = 3
         qVController.resetDots()
         qVController.reloadPickerView()
+        
 
     }
     
