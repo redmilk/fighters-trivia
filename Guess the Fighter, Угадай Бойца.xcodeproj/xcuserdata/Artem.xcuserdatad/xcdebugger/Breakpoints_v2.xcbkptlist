@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Guess the Fighter, &#x423;&#x433;&#x430;&#x434;&#x430;&#x438;&#x306; &#x411;&#x43e;&#x438;&#x306;&#x446;&#x430;/QuestionViewController.swift"
-            timestampString = "501625639.869715"
+            timestampString = "501689088.17809"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "126"
-            endingLineNumber = "126"
+            startingLineNumber = "131"
+            endingLineNumber = "131"
             landmarkName = "setNewImage(_:)"
             landmarkType = "5">
          </BreakpointContent>

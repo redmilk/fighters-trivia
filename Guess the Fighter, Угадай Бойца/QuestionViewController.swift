@@ -58,11 +58,10 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
     override func viewWillAppear(animated: Bool) {
         
-        self.imageView.image = UIImage(named:theGameController.currentFighter.image)
-        
+        //self.imageView.image = UIImage(named:theGameController.currentFighter.image)
         //viberaem centralniy element po umolchaniyu
-        pickerSelectMiddleOption()
-        
+        //self.pickerSelectMiddleOption()
+        setNewImage(theGameController.currentFighter.image)
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -92,7 +91,7 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         self.currentSelectedAnswer = self.theGameController.currentAnswerListData[row]
-        self.testLabel.text = self.theGameController.currentAnswerListData[row]
+        self.testLabel.text = self.currentSelectedAnswer
     }
     
 ////////////////////// ANIMATION DELEGATE ///////////////////////////////////////////////////////////
@@ -110,6 +109,13 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     
 //////////////////////////////////////////// CUSTOM FUNCTIONS ///////////////////////////////////////
 
+    
+    func changeFighterImageWithAnimation(imageView: UIImageView, toImage: UIImage) {
+        UIView.transitionWithView(imageView, duration: 1.0, options: .TransitionCrossDissolve, animations: {
+            imageView.image = toImage }, completion: nil)
+        
+    }
+    
     func pickerSelectMiddleOption() {
         let index: Int = Int(self.theGameController.answerListCount/2)
         picker.selectRow(index, inComponent: 0, animated: true)
@@ -122,30 +128,37 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
     
     func setNewImage(imageName: String) {
-        self.imageView.image = UIImage(named: imageName)
+        changeFighterImageWithAnimation(self.imageView, toImage: UIImage(named:imageName)!)
         pickerSelectMiddleOption()
         self.testLabel.text = currentSelectedAnswer
     }
     
-    func gameOverFunc() {
+    func gameOverAnimation() {
         myGradientAnimation(self)
         
+    }
+    
+    func resetDots() {
+        self.signX[2].image = UIImage(named: "blackDot")
+        self.signX[1].image = UIImage(named: "blackDot")
+        self.signX[0].image = UIImage(named: "blackDot")
+
     }
     
     func changeXtoDot() -> Void {
         switch (self.theGameController.triesLeft) {
         case 2:
-            self.signX[2].image = UIImage(named: "X")
-            self.signX[2].backgroundColor = UIColor.redColor()
+            self.signX[2].image = UIImage(named: "X1")
+            //self.signX[2].backgroundColor = UIColor.redColor()
             break
         case 1:
-            self.signX[1].image = UIImage(named: "X")
-            self.signX[1].backgroundColor = UIColor.redColor()
+            self.signX[1].image = UIImage(named: "X1")
+            //self.signX[1].backgroundColor = UIColor.redColor()
 
             break
         case 0:
-            self.signX[0].image = UIImage(named: "X")
-            self.signX[0].backgroundColor = UIColor.redColor()
+            self.signX[0].image = UIImage(named: "X1")
+            //self.signX[0].backgroundColor = UIColor.redColor()
 
             break
         default:
@@ -166,11 +179,11 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     
     func answerButtonAnimationOnPress() {
         let anim = CASpringAnimation(keyPath: "transform.scale")
-        anim.damping = 4.5
+        anim.damping = 7.5
         anim.initialVelocity = 15.0
         //anim.stiffness = 100.0
-        anim.mass = 2.0
-        anim.duration = anim.settlingDuration
+        anim.mass = 1.0
+        anim.duration = 0.5
         anim.fromValue = 1.2
         anim.toValue = 1.0
         self.answerButton.layer.addAnimation(anim, forKey: nil)
@@ -181,7 +194,7 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     @IBAction func answerButton(sender: UIButton) {
         answerButtonAnimationOnPress()
         testLabel.text = currentSelectedAnswer
-        self.theGameController.checkRightOrWrong(answer: self.currentSelectedAnswer, changeXToDotFunc: self.changeXtoDot, gameOverFunc: self.gameOverFunc)
+        self.theGameController.checkRightOrWrong(answer: self.currentSelectedAnswer, changeXToDotFunc: self.changeXtoDot, gameOverFunc: self.gameOverAnimation)
     }
     
     @IBAction func returnToQuestionViewController(segue: UIStoryboardSegue) {
