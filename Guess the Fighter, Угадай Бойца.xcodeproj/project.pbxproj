@@ -17,6 +17,7 @@
 		AC9911801DD9D48000D8C934 /* Fighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC99117F1DD9D48000D8C934 /* Fighter.swift */; };
 		AC9911821DD9D9FD00D8C934 /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9911811DD9D9FD00D8C934 /* GameController.swift */; };
 		ACADF9B51DDDCD59009CC0AC /* MainScreenTVController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACADF9B41DDDCD59009CC0AC /* MainScreenTVController.swift */; };
+		ACC183091DEC7FC50063F18A /* TestGradientViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC183081DEC7FC50063F18A /* TestGradientViewController.swift */; };
 		ACD757CB1DE3406D00630C7F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ACD757CA1DE3406D00630C7F /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		AC99117F1DD9D48000D8C934 /* Fighter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fighter.swift; sourceTree = "<group>"; };
 		AC9911811DD9D9FD00D8C934 /* GameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
 		ACADF9B41DDDCD59009CC0AC /* MainScreenTVController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainScreenTVController.swift; sourceTree = "<group>"; };
+		ACC183081DEC7FC50063F18A /* TestGradientViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestGradientViewController.swift; sourceTree = "<group>"; };
 		ACD757CA1DE3406D00630C7F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "Guess the Fighter, Угадай Бойца/Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -74,6 +76,7 @@
 				AC274ADD1DEB105900906D1B /* GameDoneViewController.swift */,
 				AC274ADF1DEB106F00906D1B /* GameOverViewController.swift */,
 				AC274AE11DEB16D200906D1B /* JUSTCODE.swift */,
+				ACC183081DEC7FC50063F18A /* TestGradientViewController.swift */,
 			);
 			path = "Guess the Fighter, Угадай Бойца";
 			sourceTree = "<group>";
@@ -170,6 +173,7 @@
 				AC9911801DD9D48000D8C934 /* Fighter.swift in Sources */,
 				AC274AE01DEB106F00906D1B /* GameOverViewController.swift in Sources */,
 				AC6F20501DD1D4F3009C46B7 /* AppDelegate.swift in Sources */,
+				ACC183091DEC7FC50063F18A /* TestGradientViewController.swift in Sources */,
 				AC99117E1DD9D32300D8C934 /* QuestionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

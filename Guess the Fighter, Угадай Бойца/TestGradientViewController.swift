@@ -1,32 +1,36 @@
 //
-//  GameDoneViewController.swift
+//  TestGradientViewController.swift
 //  Guess the Fighter, Угадай Бойца
 //
-//  Created by Artem on 11/27/16.
+//  Created by Artem on 11/28/16.
 //  Copyright © 2016 piqapp. All rights reserved.
 //
 
 import UIKit
 
-class GameDoneViewController: UIViewController {
+class TestGradientViewController: UIViewController {
+    
+    @IBOutlet var viewForGradient: UIView!
 
-    @IBOutlet weak var giftButton: UIButton!
-    
-    var gradient: CAGradientLayer!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        gradient = CAGradientLayer()
+        let gradient: CAGradientLayer = CAGradientLayer()
+        
         gradient.colors = [UIColor.blueColor().CGColor, UIColor.redColor().CGColor, UIColor.blueColor().CGColor]
         gradient.locations = [0.0 , 0.5, 1.0]
         gradient.startPoint = CGPoint(x: 0.0, y: 1.0)
         gradient.endPoint = CGPoint(x: 1.0, y: 1.0)
         gradient.frame = CGRect(x: 0.0, y: 0.0, width: self.view.frame.size.width, height: self.view.frame.size.height)
-        gradient.zPosition = -10
         
-        self.view.layer.addSublayer(gradient)
+        self.view.layer.insertSublayer(gradient, atIndex: 0)
+        
         // Do any additional setup after loading the view.
+    }
+    
+    
+    override func viewDidAppear(animated: Bool) {
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -34,9 +38,7 @@ class GameDoneViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func giftButtonHandler() {
-        theGameController.playSound("CLICK")
-    }
+
     /*
     // MARK: - Navigation
 
