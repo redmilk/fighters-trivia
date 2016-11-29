@@ -30,8 +30,10 @@ class GameController {
     var soundMute: Bool!
     var gameIsOver: Bool = false
     var isItFirstQuestion: Bool!
+    var skipFighter: Bool!
     init(debugLabel: UILabel, scoreLabel: UILabel) {
         
+        self.skipFighter = false
         self.isItFirstQuestion = true
 
         /// Sound on / off
@@ -40,7 +42,7 @@ class GameController {
         self.scoreLabel = scoreLabel
         CURRENTQUESTIONINDEX = 0
         
-        /*self.fighters = [Fighter(name: "Manny Paquiao", image: "pac1"),
+        self.fighters = [Fighter(name: "Manny Paquiao", image: "pac1"),
          Fighter(name: "Mike Tyson", image: "tyson1"),
          Fighter(name: "Jon Jones", image: "jones1"),
          Fighter(name: "Conor McGregor", image: "conor1"),
@@ -56,17 +58,17 @@ class GameController {
          Fighter(name: "Aleksandr Povetkin", image: "povetkin1"),
          Fighter(name: "Andy Souwer", image: "souwer1"),
          Fighter(name: "Vladimir Klichko", image: "vklichko1"),
-         Fighter(name: "Mike Zambidis", image: "zambidis1"),  ] */
+         Fighter(name: "Mike Zambidis", image: "zambidis1"),  ]
         
-        self.fighters = [Fighter(name: "Lion King", image: "lionking"),
+        /*self.fighters = [Fighter(name: "Lion King", image: "lionking"),
                          Fighter(name: "Ice Age", image: "iceage"),
                          Fighter(name: "Duck's Stories", image: "duckstory"),
                          Fighter(name: "Cars", image: "cars"),
                          Fighter(name: "Finding Nemo", image: "findingnemo"),
                          Fighter(name: "Toystory", image: "toystory"),
-                         Fighter(name: "Pinoccio", image: "pinoccio"),]
+                         Fighter(name: "Pinoccio", image: "pinoccio"),] */
         ///esli ukazano bolshe chem nuzhno to beskonechniy cikl
-        self.answerListCount = 4 //
+        self.answerListCount = 10 //
         
         self.fighters = self.fighters.shuffle()
         
@@ -83,6 +85,8 @@ class GameController {
     var CURRENTQUESTIONINDEX: Int {
         
         didSet {
+           
+            
             /// chtob dva raza podryad ne srabativala animaciya smeni kartinki pri restarte
             if self.gameIsOver == true {
                 return
@@ -97,28 +101,37 @@ class GameController {
             }
             
             self.currentFighter = self.fighters[CURRENTQUESTIONINDEX]
-            //qVController.setNewImage(self.fighters[CURRENTQUESTIONINDEX].image)
-            self.score += 1
             qVController.pickerSelectMiddleOption()
             //SHOW SCORE FUNC -->
-            
             self.scoreLabel.text = self.score.description
             self.currentAnswerListData = getRandomAnswers(howmany: self.answerListCount)
-            self.currentRightAnswerIndex = generateRightAnswer()
+            self.currentRightAnswerIndex = self.generateRightAnswer()
             qVController.reloadPickerView()
             
-            qVController.congratStripSetState("OPEN")
-            qVController.answerButtonSetState("CLOSE")
             
-            let triggerTime = (Int64(NSEC_PER_SEC) * Int64(2))
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, triggerTime), dispatch_get_main_queue(), { () -> Void in
-                qVController.pickerSelectMiddleOption()
-                qVController.congratStripSetState("CLOSE")
-                qVController.answerButtonSetState("OPEN")
+            /// esli propustit boica (polzovatel oshibsya, sgorela popitka)
+            if self.skipFighter == false {
+                qVController.congratStripSetState("OPEN")
+                qVController.answerButtonSetState("CLOSE")
+                let triggerTime = (Int64(NSEC_PER_SEC) * Int64(2))
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, triggerTime), dispatch_get_main_queue(), { () -> Void in
+                    qVController.pickerSelectMiddleOption()
+                    
+                    qVController.congratStripSetState("CLOSE")
+                    qVController.answerButtonSetState("OPEN")
+                    qVController.setNewImage(self.fighters[self.CURRENTQUESTIONINDEX].image)
+                    self.testLabel.text = self.currentAnswerListData[self.answerListCount/2]
+                    self.score += 1 /// SCORE
+
+                })
+            } else {
                 qVController.setNewImage(self.fighters[self.CURRENTQUESTIONINDEX].image)
                 self.testLabel.text = self.currentAnswerListData[self.answerListCount/2]
-                
-            })
+            }
+            
+            if self.skipFighter == true {
+                self.skipFighter = false
+            }
         }
     }
     
@@ -133,6 +146,8 @@ class GameController {
             if self.triesLeft - 1 >= 0 {
                 self.triesLeft -= 1
                 changeXToDotFunc()
+                self.skipFighter = true
+                self.CURRENTQUESTIONINDEX += 1
             }
             if self.triesLeft <= 0 {
                 playSound("GAMEOVER")
@@ -186,7 +201,14 @@ class GameController {
     
     ///generirovat indeks pravilnogo otveta
     func generateRightAnswer() -> Int {
-        let rand = Int(arc4random_uniform(UInt32(self.answerListCount)))
+        
+        ///OTKLYUCHAEM PERVIY I POSLEDNIY VARIANTI K VIBORU
+        
+        var rand = 0
+        repeat {
+            rand = Int(arc4random_uniform(UInt32(self.answerListCount)))
+        } while (rand == answerListCount - 1 || rand == 0)
+
         self.currentAnswerListData[rand] = self.currentFighter.name
         self.currentRightAnswerIndex = rand
         return rand
@@ -207,7 +229,7 @@ class GameController {
         }
         switch soundName {
         case "RIGHT":
-            AudioServicesPlaySystemSound(1407)
+            AudioServicesPlaySystemSound(1394)
             break
         case "WRONG":
             AudioServicesPlaySystemSound(1053)
@@ -225,7 +247,7 @@ class GameController {
             AudioServicesPlaySystemSound(1332)
             break
         case "CHANGEIMAGE":
-            AudioServicesPlaySystemSound(1018)
+            AudioServicesPlaySystemSound(1129)
             break
         case "CLICK":
             AudioServicesPlaySystemSound(1130)
@@ -243,7 +265,7 @@ class GameController {
         self.currentRightAnswerIndex = generateRightAnswer()
         self.testLabel.text = currentFighter.image
         self.triesLeft = 3
-        self.score = 0
+        self.score = 1
         self.gameIsOver = false
         qVController.resetDots()
         qVController.reloadPickerView()
@@ -261,6 +283,7 @@ class GameController {
         }
         return r
     }
+    
 }
 
 
@@ -268,7 +291,7 @@ class GameController {
 
 
 
-/// RIGHT 1394 1407 1430 1473 1440       WRONG 1053 1006
+/// RIGHT 1394 (1407) 1430 1473 1440       WRONG 1053 1006
 
 /// click 1057    1103    1130
 
