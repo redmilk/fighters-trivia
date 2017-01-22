@@ -31,13 +31,14 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     
     @IBOutlet weak var mainView: UIView!
     @IBOutlet weak var gradientView: UIView!
-    @IBOutlet weak var testLabel: UILabel!
+    @IBOutlet weak var fighterNameLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var picker: UIPickerView!
     @IBOutlet var signX: [UIImageView]!
     @IBOutlet weak var answerButton: UIButton!
     @IBOutlet weak var scoreLabel: UILabel!
     
+    @IBOutlet weak var congratulationsLabel: UILabel!
     @IBOutlet weak var congratStrip: UIStackView!
     //@IBOutlet weak var dotsStack: UIStackView!
     
@@ -51,66 +52,71 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     var answerStripOpenConstraint: NSLayoutConstraint!
     var answerStripCloseConstraint: NSLayoutConstraint!
     
-    var answerButtonAllowedToPress: Bool = true
+    var phrases: [String] = [String]()
+    
+    var isBetweenQuestions: Bool = false
+    var soundMute: Bool?
+    
     
     /////////////////////////// VIEW /////////////////////////////////////////////////////////////////////
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.answerButtonGradient()
-        gradient = CAGradientLayer()
-        gradient.colors = [UIColor.blueColor().CGColor, UIColor.greenColor().CGColor, UIColor.blueColor().CGColor]
-        gradient.locations = [0.0 , 0.5, 1.0]
-        gradient.startPoint = CGPoint(x: 0.0, y: 1.2)
-        gradient.endPoint = CGPoint(x: 1.0, y: 0.8)
-        
-        /// ( gradien uvilichivaem v shirinu dvoe i stavim po centru (x: - fra.siz.wi) )
-        
-        
-        gradient.frame = CGRect(x: -self.view.frame.size.width/3, y: 0.0, width: self.view.frame.size.width*3, height: self.view.frame.size.height)
-        gradient.zPosition = -10
-        
-        self.gradientView.layer.addSublayer(gradient)
-        
-        
-        
-        theGameController = GameController(debugLabel: self.testLabel, scoreLabel: self.scoreLabel)
         qVController = self
         
-        congratStripOpenConstraint = NSLayoutConstraint(item: congratStrip, attribute: .Height, relatedBy: .Equal, toItem: imageView, attribute: .Height, multiplier: 0.3, constant: 0.0) /// wtf 0.3 a ne 0.2
         
-        congratStripCloseConstraint = NSLayoutConstraint(item: congratStrip, attribute: .Height, relatedBy: .Equal, toItem: imageView, attribute: .Height, multiplier: 0.0, constant: 0.0)
+        ///dlya togo chtobi gradient menyal orientaciyu pri izmenenii raskladki
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(QuestionViewController.rotated), name: UIDeviceOrientationDidChangeNotification, object: nil)
         
-        answerStripOpenConstraint = NSLayoutConstraint(item: answerButton, attribute: .Height, relatedBy: .Equal, toItem: imageView, attribute: .Height, multiplier: 0.2, constant: 0.0)
+        phrases = ["Yes!", "Exactly!", "Well Done!", "Okay!", "Fine!", "Right!", "True!",]
         
-        answerStripCloseConstraint = NSLayoutConstraint(item: answerButton, attribute: .Height, relatedBy: .Equal, toItem: imageView, attribute: .Height, multiplier: 0.0, constant: 0.0)
+        ///nastroiki gradienta knopki NEXT, on statichniy
+        self.answerButtonGradient()
+        ///uvilichivaem razmeri freima gradienta, cveta location add vse vnutri
+        self.selfBackgroundGradientLayerSetup()
         
-        congratStripCloseConstraint.active = true
-        answerStripOpenConstraint.active = true
-        
-        //gradientView.backgroundColor = UIColor.blueColor()
-        
+        theGameController.viewFighterNameLabel = fighterNameLabel
+        theGameController.scoreLabel = scoreLabel
+        self.congratuLationStripAndAnswerButtonsConstraintsInit()
+        theGameController.startGame()
     }
     override func viewDidAppear(animated: Bool) {
         ///start animations here
-         self.gradientBackgroundColorAnimation()
+        self.gradientBackgroundColorAnimation()
         self.gradientBackgroundChangePositionAnimation()
+        
+        /// First image init
+        setNewImage(theGameController.currentFighter.image)
     }
     override func viewWillAppear(animated: Bool) {
-        setNewImage(theGameController.currentFighter.image)
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+    
+    ///dlya togo chtobi gradient menyal orientaciyu pri izmenenii raskladki
+    func rotated() {
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation)) {
+            //print("landscape")
+            ifOrientChanged()
+        }
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation)) {
+            //print("Portrait")
+            ifOrientChanged()
+        }
+    }
+    
+    private func ifOrientChanged() {
+        gradient.frame = mainView.bounds
+    }
+    
     
     ///////////////////////// PICKER VIEW DELEGATE//////////////// PICKER VIEW DELEGATE//////////////////
     
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
         return 1
     }
-    
-    
     
     func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return theGameController.answerListCount
@@ -120,9 +126,10 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         let title: String!
         title = theGameController.currentAnswerListData[row]
         ///picker rows color and text
-        let thetitle = NSAttributedString(string: title, attributes: [NSFontAttributeName:UIFont(name: "PingFangTC-Thin", size: 26.0)!,NSForegroundColorAttributeName:UIColor.whiteColor()])
-        let hue = CGFloat(0.70)
-        pickerLabel.backgroundColor = UIColor(hue: hue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+        let thetitle = NSAttributedString(string: title, attributes: [NSFontAttributeName:UIFont(name: "PingFangTC-Thin", size: 22.0)!,NSForegroundColorAttributeName:UIColor.whiteColor()])
+        //let hue = CGFloat(1.0 / CGFloat(row))
+        pickerLabel.backgroundColor = UIColor(hue: CGFloat(0.7), saturation: 1.0, brightness: 1.0, alpha: 0.65)
+        //pickerLabel.backgroundColor = UIColor(hue: hue, saturation: 1.0, brightness: 1.0, alpha: 0.65)
         pickerLabel.textAlignment = .Center
         pickerLabel.attributedText = thetitle
         return pickerLabel
@@ -130,14 +137,25 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         
+        if self.isBetweenQuestions == true {
+            return
+        }
+        
         if self.currentRowIndex != row {    ///esli smestilis na novuyu yacheiku
             theGameController.playSound("SCROLL")
-            self.answerButtonAllowedToPress = true
+            
         }
-        self.currentRowIndex = row
-        self.currentSelectedAnswer = theGameController.currentAnswerListData[row]
-        self.testLabel.text = self.currentSelectedAnswer
         
+        let cubeAnimationTransitionDirection: AnimationDirection = (row > self.currentRowIndex) ? .Positive : .Negative
+        
+        self.currentSelectedAnswer = theGameController.currentAnswerListData[row]
+
+        if self.currentRowIndex != row {    ///esli smestilis na novuyu yacheiku
+            ///pri vibore v pickere obnovlyaem label s fighter name
+            self.refreshCurrentFighterNameLabelWithAnimation(self.currentSelectedAnswer, animationDirection: cubeAnimationTransitionDirection)
+        }
+        
+        self.currentRowIndex = row
         
     }
     
@@ -153,7 +171,61 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         }
     }
     
-    //////////////////////////////////////////// CUSTOM FUNCTIONS ///////////////////////////////////////
+    // //////////////////////////////////////////// CUSTOM FUNCTIONS ///////////////////////////////////////
+    
+    func refreshCurrentFighterNameLabel(newLabelText: String) {
+        self.fighterNameLabel.text = newLabelText
+    }
+    
+    
+    func refreshCurrentFighterNameLabelWithAnimation(newLabelText: String, animationDirection: AnimationDirection) {
+        
+        self.fighterNameLabel.text = newLabelText
+        cubeTransition(label: self.fighterNameLabel, text: newLabelText, direction: animationDirection)
+    }
+    
+    ///// CUBE TRANSITION ANIMATION ////// ///// ///// /////
+    
+    enum AnimationDirection: Int {
+        case Positive = 1
+        case Negative = -1
+    }
+    
+    // anim changing fighter title label with cube transition
+    func cubeTransition(label label: UILabel, text: String, direction: AnimationDirection) {
+        
+        let auxLabel = UILabel(frame: label.frame)
+        auxLabel.text = text
+        auxLabel.font = label.font
+        auxLabel.textAlignment = label.textAlignment
+        auxLabel.textColor = label.textColor
+        auxLabel.backgroundColor = label.backgroundColor
+        auxLabel.lineBreakMode = .ByClipping
+        
+        let auxLabelOffset = CGFloat(direction.rawValue) *
+            label.frame.size.height/2.0
+        
+        auxLabel.transform = CGAffineTransformConcat(
+            CGAffineTransformMakeScale(1.0, 0.1),
+            CGAffineTransformMakeTranslation(0.0, auxLabelOffset))
+        
+        label.superview!.addSubview(auxLabel)
+                                    ///
+        UIView.animateWithDuration(0.2, delay: 0.0, options: .CurveEaseOut, animations: {
+            auxLabel.transform = CGAffineTransformIdentity
+            label.transform = CGAffineTransformConcat(
+                CGAffineTransformMakeScale(1.0, 0.1),
+                CGAffineTransformMakeTranslation(0.0, -auxLabelOffset))
+            }, completion: {_ in
+                label.text = auxLabel.text
+                label.transform = CGAffineTransformIdentity
+                
+                auxLabel.removeFromSuperview()
+        })
+        
+    }
+    
+    /////   /////   //////  /////// //////  ////
     
     func doSegueWithIdentifier(identif: String)
     {
@@ -162,7 +234,9 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     
     ///parametr lishniy         ///GRADIENT COLOR CHANGE IF WRONG
     func backGroundColorChangeAnimationOnAnswer(playerAnswerResult: String) {
-        
+        ///ne ispulzuetsya potomu chto dinamichniy zadniy background ne pozvolyaet eto, tak chto return
+        ///eshe odin horoshiy variant pri oshibke, gradient menyaetsya na protivopolozhniy po simmetrii
+        return  ///////////// Testing
         let anim = CABasicAnimation(keyPath: "colors")
         anim.toValue = [UIColor.blueColor().CGColor, UIColor.redColor().CGColor, UIColor.blueColor().CGColor]
         anim.fromValue = [UIColor.redColor().CGColor, UIColor.redColor().CGColor, UIColor.redColor().CGColor]
@@ -195,13 +269,13 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         
         let anim = CABasicAnimation(keyPath: "colors")
         ///1.
-        //anim.fromValue = [UIColor.blueColor().CGColor, UIColor.greenColor().CGColor, UIColor.blueColor().CGColor]
-        //anim.toValue = [UIColor.cyanColor().CGColor, UIColor.blueColor().CGColor, UIColor.cyanColor().CGColor]
+        anim.fromValue = [UIColor.blueColor().CGColor, UIColor.greenColor().CGColor, UIColor.blueColor().CGColor]
+        anim.toValue = [UIColor.blueColor().CGColor, UIColor.redColor().CGColor, UIColor.blueColor().CGColor]
         
-        anim.fromValue = [UIColor.blueColor().CGColor, UIColor.redColor().CGColor, UIColor.blueColor().CGColor]
-        anim.toValue = [UIColor.redColor().CGColor, UIColor.blueColor().CGColor, UIColor.redColor().CGColor]
+        //anim.fromValue = [UIColor.blueColor().CGColor, UIColor.redColor().CGColor, UIColor.blueColor().CGColor]
+        //anim.toValue = [UIColor.redColor().CGColor, UIColor.blueColor().CGColor, UIColor.redColor().CGColor]
         
-        anim.duration = 7
+        anim.duration = 8
         anim.repeatCount = Float.infinity
         anim.autoreverses = true
         anim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
@@ -209,18 +283,19 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         self.gradient.addAnimation(anim, forKey: nil)
     }
     
-    /// GRADIENT BCGR CHANGE POSITION ANIMATION DEPENDS ON ROW SELECTED
     func gradientBackgroundChangePositionAnimation() {
         let anim = CABasicAnimation(keyPath: "locations")
         anim.fromValue = [0.0, 0.0, 0.25]
         anim.toValue = [0.75, 1.0, 1.0]
-        anim.duration = 10
+        anim.duration = 15
         //anim.autoreverses = true
         anim.repeatCount = Float.infinity
         anim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         self.gradient.addAnimation(anim, forKey: nil)
     }
     
+    
+    ////// ANSWER BUTTON TITTLE SET ...
     
     func answerButtonSetState(state: String) {
         if theGameController.gameIsOver == true {
@@ -233,11 +308,10 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
                     self.answerStripOpenConstraint.active = true
                     self.answerStripCloseConstraint.active = false
                 }
-                self.view.layoutIfNeeded()
+                self.view.layoutIfNeeded()          ///      ///       ///     ///
+                // //////////////////////////////lllllllllllllllllllllllllllllll//
                 self.answerButton.setTitle("NEXT", forState: .Normal)
                 }, completion: { _ in
-                    ///lishaet vozmozhnosti vibora pickera mezhdu voprosami (stranno pochemu tut ne false) *
-                    self.picker.userInteractionEnabled = true
             })
             
             break
@@ -250,8 +324,6 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
                 self.view.layoutIfNeeded()
                 self.answerButton.setTitle("", forState: .Normal)
                 }, completion: { _ in
-                    /// tozhesamoe *
-                    self.picker.userInteractionEnabled = false
             })
             break
         default:
@@ -264,6 +336,7 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         if theGameController.gameIsOver == true {
             return
         }
+        self.setRandomPhrase() /// SET RAAAANDOM PHRASEEEE
         switch state {
         case "OPEN":
             UIView.animateWithDuration(2.0, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.2, options: [.CurveEaseInOut], animations: {
@@ -284,7 +357,9 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
                 }
                 self.view.layoutIfNeeded()
                 
-                }, completion: nil)
+                }, completion: { _ in
+                    /// PICKER USER INTERACTION ENABLED
+            })
             break
         default:
             break
@@ -292,39 +367,45 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
     
     
-    func changeFighterImageWithAnimation(imageView: UIImageView, toImage: UIImage) {
+    func changeFighterImageWithAnimation(toImage: UIImage) {
+        
         if theGameController.gameIsOver == true {
             return
         }
-        /*imageView.image = toImage
-         let pos = imageView.layer.position.y
-         let anim = CASpringAnimation(keyPath: "position.y")
-         anim.damping = 8.5
-         anim.initialVelocity = 15.0
-         //anim.stiffness = 100.0
-         anim.mass = 1.0
-         anim.duration = anim.settlingDuration
-         anim.fromValue = pos - 300.0
-         anim.toValue = pos
-         self.imageView.layer.addAnimation(anim, forKey: nil) */
+        self.imageView.image = toImage
+        imageView.image = toImage
+        let pos = imageView.layer.position.y
+        let anim = CASpringAnimation(keyPath: "position.y")
+        anim.damping = 9.1
+        anim.initialVelocity = 15.0
+        anim.stiffness = 150.0
+        anim.mass = 1.0
+        anim.duration = anim.settlingDuration
+        anim.fromValue = pos - 300
+        anim.toValue = pos
+        self.imageView.layer.addAnimation(anim, forKey: nil)
+    }
+    
+    
+    func imageViewFlyDownAnimation() {
+        if theGameController.gameIsOver == true {
+            return
+        }
         
-        /// Transition between Question
-        UIView.transitionWithView(imageView, duration: 0.4, options: .TransitionFlipFromLeft, animations: {
-            
-            imageView.image = toImage
-            
-            
-            }, completion: { _ in
-                
-        })
+        let pos = imageView.layer.position.y
+        let animMove = CASpringAnimation(keyPath: "transform.scale")
+        animMove.fromValue = 2.0
+        animMove.toValue = 1.0
+        animMove.duration = animMove.settlingDuration
+        animMove.damping = 8.0
         
+        self.fighterNameLabel.layer.addAnimation(animMove, forKey: nil)
     }
     
     func pickerSelectMiddleOption() {
         let index: Int = Int(theGameController.answerListCount/2)
         picker.selectRow(index, inComponent: 0, animated: true)
         self.currentSelectedAnswer = theGameController.currentAnswerListData[picker.selectedRowInComponent(0)]
-        //testLabel.text = currentSelectedAnswer
     }
     
     func reloadPickerView() {
@@ -332,17 +413,12 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
     
     func setNewImage(imageName: String) {
-        theGameController.playSound("CHANGEIMAGE")
-        changeFighterImageWithAnimation(self.imageView, toImage: UIImage(named:imageName)!)
-        pickerSelectMiddleOption()
-        self.testLabel.text = currentSelectedAnswer
-    }
-    
-    func gameOverAnimation() {  /// E
-        
-        congratStripOpenConstraint.active = false
-        congratStripCloseConstraint.active = true
-        print("GAME OVER ANIMATION")
+        if theGameController != nil {
+            theGameController.playSound("CHANGEIMAGE")
+        }
+        let image = UIImage(named: imageName)!
+        self.changeFighterImageWithAnimation(image)
+        self.pickerSelectMiddleOption()
     }
     
     func resetDots() {
@@ -350,29 +426,78 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         self.signX[1].image = UIImage(named: "singleDot")
         self.signX[0].image = UIImage(named: "singleDot")
         
+        self.signX[2].transform = CGAffineTransformIdentity
+        self.signX[2].transform = CGAffineTransformIdentity
+        self.signX[2].transform = CGAffineTransformIdentity
     }
     
-    func changeXtoDot() -> Void {
+    func congratStripConstraintsSetToClose() {
+        self.congratStripOpenConstraint.active = false
+        self.congratStripCloseConstraint.active = true
+    }
+    
+    func changeXtoDot() {
+        if (theGameController.fightersCount - 1 >= theGameController.CURRENTQUESTIONINDEX) {
+            /// GAME OVER
+            theGameController.checkForPlayerGameOver(delayToGameOverAnimation: 1.0)
+        }
         switch (theGameController.triesLeft) {
         case 2:
-            self.signX[2].image = UIImage(named: "X1")
-            //self.signX[2].backgroundColor = UIColor.redColor()
+            
+            UIView.animateWithDuration(0.2, delay: 0.0, options: [], animations: {
+                self.signX[2].center.y -= self.view.bounds.height / 5
+                }, completion: { _ in
+                    self.signX[2].image = UIImage(named: "X1")
+                    UIView.animateWithDuration(0.3, delay: 0.1, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.8, options: [], animations: {
+                        self.signX[2].center.y += self.view.bounds.height / 5
+                        }, completion: nil)
+            })
             break
         case 1:
-            self.signX[1].image = UIImage(named: "X1")
-            //self.signX[1].backgroundColor = UIColor.redColor()
+            UIView.animateWithDuration(0.2, delay: 0.0, options: [], animations: {
+                self.signX[1].center.y -= self.view.bounds.height / 5
+                }, completion: { _ in
+                    UIView.animateWithDuration(0.3, delay: 0.1, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.8, options: [], animations: {
+                        self.signX[1].image = UIImage(named: "X1")
+                        self.signX[1].center.y += self.view.bounds.height / 5
+                        }, completion: nil)
+            })
             break
         case 0:
-            self.signX[0].image = UIImage(named: "X1")
-            //self.signX[0].backgroundColor = UIColor.redColor()
-            
+            UIView.animateWithDuration(0.2, delay: 0.0, options: [], animations: {
+                self.signX[0].center.y -= self.view.bounds.height / 5
+                }, completion: { _ in
+                    UIView.animateWithDuration(0.3, delay: 0.1, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.8, options: [], animations: {
+                        self.signX[0].image = UIImage(named: "X1")
+                        self.signX[0].center.y += self.view.bounds.height / 5
+                        }, completion: nil)
+            })
             break
         default:
             break
         }
     }
     
+    func answerButtonAnimationIfWrongForGradients() {
+        self.answerButton.backgroundColor = UIColor.redColor()
+        self.answerButton.center.y -= self.answerButton.bounds.height
+        UIView.animateWithDuration(1.0, animations: {
+            self.answerButton.backgroundColor = UIColor.clearColor()
+            self.answerButton.center.y += self.answerButton.bounds.height
+            }, completion: nil)
+    }
+    
+    func answerButtonAnimationIfRightForGradients() {
+        self.answerButton.backgroundColor = UIColor.greenColor()
+        //self.answerButton.center.y -= self.answerButton.bounds.height
+        UIView.animateWithDuration(1.0, animations: {
+            self.answerButton.backgroundColor = UIColor.clearColor()
+            // self.answerButton.center.y += self.answerButton.bounds.height
+            }, completion: nil)
+    }
+    
     func answerButtonAnimationOnPress() {
+        return
         let anim = CASpringAnimation(keyPath: "transform.scale")
         anim.damping = 7.9
         anim.initialVelocity = 15.0
@@ -388,12 +513,15 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     ////////////////////////////// ANSWER BUTTON HANDLER /////////////////////// HANDLERS ////////////////
     
     @IBAction func answerButton(sender: UIButton) {
-        if self.answerButtonAllowedToPress == false {
-            return
-        }
+        ///zdes refresh chtob esli picker sovpal s kartinkoi i pri nazhatii tak i ostayutsya znaki voprosov na leible, t.k. picker ne smeshyalsya i label ne obnovlyalsya
+        self.disablePressAnswerButtonForTime()
+        self.isBetweenQuestions = true
         answerButtonAnimationOnPress()
-        testLabel.text = currentSelectedAnswer
-        theGameController.checkRightOrWrong(answer: self.currentSelectedAnswer, changeXToDotFunc: self.changeXtoDot, gameOverFunc: self.gameOverAnimation)
+        if(theGameController.checkRightOrWrong(answer: self.currentSelectedAnswer)) {
+            self.refreshCurrentFighterNameLabel(self.currentSelectedAnswer)
+        } else {
+            self.refreshCurrentFighterNameLabel("? ? ? ? ?")
+        }
         /// answer disable for pressing for 1 second
         self.disablePressAnswerButtonForTime()
     }
@@ -411,7 +539,8 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
     
     func answerButtonGradient() {
-        
+        return
+        /// RETURN KNOPKA ANSWER BUDET PROZRACHNOI
         let gradient: CAGradientLayer = CAGradientLayer()
         let newFrame: CGRect = CGRect(x: 0.0, y: 0.0, width: self.view.bounds.width, height: self.answerButton.bounds.height)
         gradient.frame = newFrame
@@ -430,5 +559,49 @@ class QuestionViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         
         self.answerButton.layer.addSublayer(gradient)
     }
+    
+    
+    func selfBackgroundGradientLayerSetup() {
+        gradient = CAGradientLayer()
+        gradient.colors = [UIColor.blueColor().CGColor, UIColor.redColor().CGColor, UIColor.blueColor().CGColor]
+        gradient.locations = [0.0, 0.0, 0.25]
+        gradient.startPoint = CGPoint(x: 0.0, y: 1.2)
+        gradient.endPoint = CGPoint(x: 1.0, y: 0.8)
+        
+        /// ( gradien uvilichivaem v shirinu dvoe i stavim po centru (x: - fra.siz.wi) )
+        gradient.frame = CGRect(x: -self.view.frame.size.width/3, y: 0.0, width: self.view.frame.size.width*3, height: self.view.frame.size.height)
+        gradient.zPosition = -10
+        
+        self.gradientView.layer.addSublayer(gradient)
+    }
+    
+    func congratuLationStripAndAnswerButtonsConstraintsInit() {
+        congratStripOpenConstraint = NSLayoutConstraint(item: congratStrip, attribute: .Height, relatedBy: .Equal, toItem: imageView, attribute: .Height, multiplier: 0.3, constant: 0.0) /// wtf 0.3 a ne 0.2
+        
+        congratStripCloseConstraint = NSLayoutConstraint(item: congratStrip, attribute: .Height, relatedBy: .Equal, toItem: imageView, attribute: .Height, multiplier: 0.0, constant: 0.0)
+        
+        answerStripOpenConstraint = NSLayoutConstraint(item: answerButton, attribute: .Height, relatedBy: .Equal, toItem: imageView, attribute: .Height, multiplier: 0.2, constant: 0.0)
+        
+        answerStripCloseConstraint = NSLayoutConstraint(item: answerButton, attribute: .Height, relatedBy: .Equal, toItem: imageView, attribute: .Height, multiplier: 0.0, constant: 0.0)
+        
+        congratStripCloseConstraint.active = true
+        answerStripOpenConstraint.active = true
+    }
+    
+    func setRandomPhrase() {
+        let rand = Int(arc4random_uniform(UInt32(phrases.count)))
+        self.congratulationsLabel.text = self.phrases[rand]
+    }
+    
+    func animateImageViewIfPlayerWrong() {
+        let anim = CABasicAnimation()
+        anim.fromValue = 1.0
+        anim.toValue = 0.0
+        anim.duration = 1.0
+        self.imageView.layer.addAnimation(anim, forKey: nil)
+        
+        
+    }
+    
     
 }

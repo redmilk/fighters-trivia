@@ -11,6 +11,102 @@
 import Foundation
 import UIKit
 
+ 
+ override func viewWillAppear(animated: Bool) {
+ super.viewWillAppear(animated)
+ 
+ ///1
+ let appDelegate =
+ UIApplication.sharedApplication().delegate as! AppDelegate
+ 
+ let managedContext = appDelegate.managedObjectContext
+ 
+ ///2
+ let fetchRequest = NSFetchRequest(entityName: "Person")
+ 
+ ///3
+ do {
+ let results =
+ try managedContext.executeFetchRequest(fetchRequest)
+ people = results as! [NSManagedObject]
+ } catch let error as NSError {
+ print("Could not fetch \(error), \(error.userInfo)")
+ }
+ }
+
+ 
+ 
+ func saveName(name: String) {
+ ///1
+ let appDelegate =
+ UIApplication.sharedApplication().delegate as! AppDelegate
+ 
+ let managedContext = appDelegate.managedObjectContext
+ 
+ ///2
+ let entity =  NSEntityDescription.entityForName("Person",
+ inManagedObjectContext:managedContext)
+ 
+ let person = NSManagedObject(entity: entity!,
+ insertIntoManagedObjectContext: managedContext)
+ 
+ ///3
+ person.setValue(name, forKey: "name")
+ 
+ ///4
+ do {
+ try managedContext.save()
+ ///5
+ people.append(person)
+ } catch let error as NSError  {
+ print("Could not save \(error), \(error.userInfo)")
+ }
+ }
+ 
+ 
+ // pryam ne znayu chto i  skazat... molodec chto syuda dobavil i eto ostavil zdes' --->
+ 
+ ///parametr lishniy         ///GRADIENT COLOR CHANGE IF WRONG
+ func backGroundColorChangeAnimationOnAnswer(playerAnswerResult: String) {
+ ///ne ispulzuetsya potomu chto dinamichniy zadniy background ne pozvolyaet eto, tak chto return
+ ///eshe odin horoshiy variant pri oshibke, gradient menyaetsya na protivopolozhniy po simmetrii
+ return  ///////////// Testing
+ let anim = CABasicAnimation(keyPath: "colors")
+ anim.toValue = [UIColor.blueColor().CGColor, UIColor.redColor().CGColor, UIColor.blueColor().CGColor]
+ anim.fromValue = [UIColor.redColor().CGColor, UIColor.redColor().CGColor, UIColor.redColor().CGColor]
+ anim.duration = 1.5
+ anim.repeatCount = 1
+ anim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+ 
+ self.gradient.addAnimation(anim, forKey: nil)
+ 
+ /// Predidushiy variant animacii pri oshibke v otvete. bckr s krasnogo na siniy
+ 
+ /*let anim = CABasicAnimation(keyPath: "backgroundColor")
+ 
+ switch playerAnswerResult {
+ case "WRONG":
+ anim.fromValue = UIColor.redColor().CGColor
+ break
+ default: break
+ }
+ anim.toValue = UIColor.blueColor().CGColor
+ anim.duration = 1.5
+ anim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+ anim.repeatCount = 1
+ self.gradientView.bacgroundcolor = blueColor()
+ */
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
 func initGradient() {
     gradient = CAGradientLayer()
