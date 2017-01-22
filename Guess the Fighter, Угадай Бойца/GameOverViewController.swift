@@ -18,6 +18,10 @@ class GameOverViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        ///dlya togo chtobi gradient menyal orientaciyu pri izmenenii raskladki
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(QuestionViewController.rotated), name: UIDeviceOrientationDidChangeNotification, object: nil)
+        
         //newHighScoreAnimation()
         
         highScoreLabel.text = theGameController.highscore.description
@@ -50,12 +54,34 @@ class GameOverViewController: UIViewController {
     
     @IBAction func mainMenuButtonHandler(sender: UIButton) {
         theGameController.playSound("CLICK")
-        theGameController.restartGame()
+        performSegueWithIdentifier("showMainMenu", sender: nil)
     }
     
     func newHighScoreAnimation() {
         
     }
+    
+    ///dlya togo chtobi gradient menyal orientaciyu pri izmenenii raskladki
+    func rotated()
+    {
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+            //print("landscape")
+            ifOrientChanged()
+        }
+        
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+            //print("Portrait")
+            ifOrientChanged()
+        }
+        
+    }
+    
+    private func ifOrientChanged() {
+        gradient.frame = self.view.bounds
+    }
+
     /*
      // MARK: - Navigation
      

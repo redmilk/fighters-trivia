@@ -1,42 +1,38 @@
 //
-//  TestGradientViewController.swift
+//  SplashScreenViewController.swift
 //  Guess the Fighter, Угадай Бойца
 //
-//  Created by Artem on 11/28/16.
+//  Created by Artem on 12/9/16.
 //  Copyright © 2016 piqapp. All rights reserved.
 //
 
 import UIKit
 
-class TestGradientViewController: UIViewController {
-    
-    @IBOutlet var viewForGradient: UIView!
+class SplashScreenViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        /////GAMECONTROLLER/////
+        theGameController = GameController()
+        theGameController.soundMute = false
 
-        let gradient: CAGradientLayer = CAGradientLayer()
-        
-        gradient.colors = [UIColor.blueColor().CGColor, UIColor.redColor().CGColor, UIColor.blueColor().CGColor]
-        gradient.locations = [0.0 , 0.5, 1.0]
-        gradient.startPoint = CGPoint(x: 0.0, y: 1.0)
-        gradient.endPoint = CGPoint(x: 1.0, y: 1.0)
-        gradient.frame = CGRect(x: 0.0, y: 0.0, width: self.view.frame.size.width, height: self.view.frame.size.height)
-        
-        self.view.layer.insertSublayer(gradient, atIndex: 0)
-        
+        let splashScreenTime = 3
+        let triggerTime = (Int64(NSEC_PER_SEC) * Int64(splashScreenTime))
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, triggerTime), dispatch_get_main_queue(), { () -> Void in
+            self.performSegueWithIdentifier("showStartScreen", sender: nil)
+        })
+
         // Do any additional setup after loading the view.
-    }
-    
-    
-    override func viewDidAppear(animated: Bool) {
-        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    
     
 
     /*

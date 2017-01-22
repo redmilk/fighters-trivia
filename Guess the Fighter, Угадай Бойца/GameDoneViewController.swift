@@ -16,6 +16,9 @@ class GameDoneViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        ///dlya togo chtobi gradient menyal orientaciyu pri izmenenii raskladki
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(QuestionViewController.rotated), name: UIDeviceOrientationDidChangeNotification, object: nil)
 
         gradient = CAGradientLayer()
         gradient.colors = [UIColor.blueColor().CGColor, UIColor.redColor().CGColor, UIColor.blueColor().CGColor]
@@ -36,7 +39,30 @@ class GameDoneViewController: UIViewController {
     
     @IBAction func giftButtonHandler() {
         theGameController.playSound("CLICK")
+        performSegueWithIdentifier("showMainMenu", sender: nil)
     }
+    
+    ///dlya togo chtobi gradient menyal orientaciyu pri izmenenii raskladki
+    func rotated()
+    {
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+            //print("landscape")
+            ifOrientChanged()
+        }
+        
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+            //print("Portrait")
+            ifOrientChanged()
+        }
+        
+    }
+    
+    private func ifOrientChanged() {
+        gradient.frame = self.view.bounds
+    }
+
     /*
     // MARK: - Navigation
 
